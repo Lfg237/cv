@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CV Professionnel</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Inter:wght@300;400;700&display=swap" rel="stylesheet"/>
+
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.4/dist/signature_pad.umd.min.js"></script>
+
+<style>
+body{
+margin:0;
+background:#eef3ff;
+font-family:Inter,sans-serif;
+}
+
+.cv{
+width:210mm;
+min-height:297mm;
+background:white;
+margin:auto;
+padding:20px;
+position:relative;
+}
+
+.top{
+display:flex;
+gap:15px;
+align-items:center;
+}
+
+.photo-btn{
+width:70px;
+height:70px;
+border-radius:50%;
+border:2px dashed #333;
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+overflow:hidden;
+background:#f5f5f5;
+}
+
+.photo-btn img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.edit{
+border:none;
+font-family:Inter;
+font-size:14px;
+outline:none;
+background:transparent;
+width:100%;
+}
+
+.name{
+font-family:Dancing Script;
+font-size:26px;
+font-weight:bold;
+color:#2b59ff;
+}
+
+.subtitle{
+font-size:14px;
+font-weight:bold;
+color:#444;
+}
+
+.section{
+margin-top:12px;
+}
+
+h3{
+color:#2b59ff;
+margin-bottom:4px;
+font-size:14px;
+}
+
+textarea{
+width:100%;
+border:1px solid #ddd;
+border-radius:6px;
+resize:none;
+font-size:12px;
+padding:5px;
+}
+
+.info-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px;
+}
+
+.signature{
+position:absolute;
+bottom:10px;
+left:20px;
+right:20px;
+text-align:center;
+font-size:10px;
+color:#444;
+}
+
+canvas{
+border:1px solid #ccc;
+width:100%;
+height:50px;
+margin-top:6px;
+}
+
+.btn{
+padding:8px 12px;
+margin-top:10px;
+border:none;
+cursor:pointer;
+border-radius:6px;
+}
+
+.download{
+background:#2b59ff;
+color:white;
+}
+
+input[type=file]{
+display:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="cv" id="cv">
+
+<!-- PHOTO -->
+<label class="photo-btn">
+<input type="file" accept="image/*" onchange="loadPhoto(event)">
+<img id="photo">
+</label>
+
+<!-- NOM + TITRE -->
+<div style="margin-left:90px;">
+<input class="name edit" value="👨‍💼 Jean KONO EMINI">
+<input class="subtitle edit" value="💼 Développeur Web | Designer | Entrepreneur">
+</div>
+
+<!-- INFOS PERSONNELLES -->
+<div class="section info-grid">
+
+
+
+<div>
+<h3>📍 diplome</h3>
+<textarea> c.e.p , b.e.p.c , b.a.c</textarea>
+</div>
+<div>
+<h3>📌 Situation matrimoniale</h3>
+textarea>Celibataire</textarea>
+</div>
+
+<div>
+<h3>📍 Localisation</h3>
+<textarea>Yaoundé - Cameroun / Quartier: Bastos</textarea>
+</div>
+
+</div>
+
+<div class="section">
+<h3>🧠 Biographie</h3>
+<textarea>Je suis un jeune développeur passionné par la création de solutions digitales modernes, sites web et applications professionnelles.</textarea>
+</div>
+
+<div class="section">
+<h3>🎓 Formation</h3>
+<textarea>BTS Informatique - Université de Yaoundé</textarea>
+</div>
+
+<div class="section">
+<h3>💼 Expérience</h3>
+<textarea>Création de sites web, applications e-commerce, design UI/UX et gestion de projets digitaux.</textarea>
+</div>
+
+<div class="section">
+<h3>⭐ Compétences</h3>
+<textarea>HTML, CSS, JavaScript, PHP, Design 🎨, Marketing Digital 🚀</textarea>
+</div>
+
+<!-- SIGNATURE (RÉDUITE) -->
+<div class="section">
+<h3>✍️ Signature</h3>
+<canvas id="signature"></canvas>
+<button onclick="clearSig()">Effacer</button>
+</div>
+
+<!-- DOWNLOAD -->
+<button class="btn download" onclick="downloadCV()">📥 Télécharger PDF</button>
+
+<div class="signature">
+Créé par ETS LesFacilitateurs Groupe 📞 +237651475255
+</div>
+
+</div>
+
+
+<script>
+
+let sigPad;
+
+// 🔐 CODE CACHÉ (encodé)
+function getVIP(){
+  return atob("MjMzMjMz"); // 233233 encodé
+}
+
+window.onload = ()=>{
+const canvas = document.getElementById("signature");
+sigPad = new SignaturePad(canvas);
+};
+
+function clearSig(){
+sigPad.clear();
+}
+
+function loadPhoto(e){
+const file = e.target.files[0];
+if(!file) return;
+
+const reader = new FileReader();
+reader.onload = ev=>{
+document.getElementById("photo").src = ev.target.result;
+};
+reader.readAsDataURL(file);
+}
+
+async function downloadCV(){
+
+let code = prompt("Code requis pour télécharger le CV :");
+
+if(code !== getVIP()){
+alert("❌ Code incorrect");
+return;
+}
+
+const cv = document.getElementById("cv");
+
+const canvas = await html2canvas(cv,{
+scale:2,
+useCORS:true
+});
+
+const img = canvas.toDataURL("image/png");
+
+const { jsPDF } = window.jspdf;
+const pdf = new jsPDF("p","mm","a4");
+
+const w = pdf.internal.pageSize.getWidth();
+const h = (canvas.height * w) / canvas.width;
+
+pdf.addImage(img,"PNG",0,0,w,h);
+pdf.save("CV_Professionnel.pdf");
+}
+
+</script>
+
+</body>
+  </html>
